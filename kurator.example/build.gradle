@@ -1,0 +1,5 @@
+archivesBaseName = "kurator.example"
+
+dependencies {
+    compile project(kurator_projects.core)
+}

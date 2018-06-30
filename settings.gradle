@@ -1,0 +1,4 @@
+rootProject.name = 'kurator'
+
+include ":kurator.core"
+include ":kurator.example"

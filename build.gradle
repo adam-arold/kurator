@@ -1,0 +1,112 @@
+allprojects {
+    group 'org.codetome.kurator'
+    version '2018.1.0-PREVIEW'
+}
+
+buildscript {
+    ext {
+        kotlinVersion = "1.2.30"
+        kotlinxHtmlVersion = "0.6.10"
+
+        slf4jVersion = "1.7.25"
+        logbackVersion = "1.2.3"
+
+        flexmarkVersion = "0.34.0"
+        snakeyamlVersion = "1.21"
+        reflectionsVersion = "0.9.10"
+
+        junitPlatformRunnerVersion = "1.1.1"
+        jupiterVersion = "5.1.1"
+        mockitoKotlinVersion = "0.9.0"
+        assertjVersion = "3.9.0"
+    }
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.junit.platform:junit-platform-gradle-plugin:$junitPlatformRunnerVersion"
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+ext {
+    kurator_projects = [
+            core   : ":kurator.core",
+            example: ":kurator.example"
+    ]
+    libraries = [
+            kotlin_stdlib             : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
+            kotlin_reflect            : "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+
+            kotlin_script_runtime     : "org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion",
+            kotlin_compiler_embeddable: "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion",
+            kotlin_script_util        : "org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion",
+
+            kotlinx_html              : "org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinxHtmlVersion",
+
+            slf4j_api                 : "org.slf4j:slf4j-api:$slf4jVersion",
+            logback                   : "ch.qos.logback:logback-classic:$logbackVersion",
+            flexmark                  : "com.vladsch.flexmark:flexmark-all:$flexmarkVersion",
+            snakeyaml                 : "org.yaml:snakeyaml:$snakeyamlVersion",
+            reflections               : "org.reflections:reflections:$reflectionsVersion",
+
+            jupiter_api               : "org.junit.jupiter:junit-jupiter-api:$jupiterVersion",
+            jupiter_engine            : "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion",
+            mockito_kotlin            : "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
+            assertj                   : "org.assertj:assertj-core:$assertjVersion"
+    ]
+}
+
+subprojects {
+
+    apply plugin: 'kotlin'
+
+    compileKotlin {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    compileTestKotlin {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        compile libraries.kotlin_stdlib
+        compile libraries.kotlin_reflect
+        compile libraries.kotlinx_html
+
+        compile libraries.slf4j_api
+        compile libraries.logback
+        compile libraries.flexmark
+        compile libraries.snakeyaml
+        compile libraries.reflections
+
+        testCompile libraries.jupiter_api
+        testCompile libraries.mockito_kotlin
+        testCompile libraries.assertj
+
+        testRuntime libraries.jupiter_engine
+    }
+}

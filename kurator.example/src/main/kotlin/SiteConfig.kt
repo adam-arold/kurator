@@ -9,7 +9,7 @@ object SiteConfig : Config(configure {
     email = "email@example.com"
     description = "This is just a simple example site made with Kurator."
     url = "http://example.com"
-    sourceDir = ""
+    sourceDir = "kurator.example/src/main/resources"
     assetsDir = "assets"
     destinationDir = "site"
     collectionsDir = "collections"

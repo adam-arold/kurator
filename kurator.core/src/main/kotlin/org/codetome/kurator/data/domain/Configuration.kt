@@ -18,5 +18,5 @@ data class Configuration(val title: String,
                          val debug: Boolean,
                          val markdownExtensions: List<String>,
                          val collectionsConfig: List<CollectionConfig>,
-                         val defaultLayout: Layout)
+                         val defaultLayout: Layout<TemplateContext>)
 

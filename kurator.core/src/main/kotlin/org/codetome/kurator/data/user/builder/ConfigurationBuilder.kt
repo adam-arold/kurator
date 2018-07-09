@@ -1,9 +1,9 @@
 package org.codetome.kurator.data.user.builder
 
 import org.codetome.kurator.data.domain.Configuration
+import org.codetome.kurator.data.domain.TemplateContext
 import org.codetome.kurator.defaults.KuratorDefaultLayout
 import org.codetome.kurator.template.Layout
-import java.io.File
 
 class
 ConfigurationBuilder(var title: String = "Title",
@@ -21,7 +21,7 @@ ConfigurationBuilder(var title: String = "Title",
                      var host: String = "127.0.0.1",
                      var port: Int = 4000,
                      var baseurl: String = "",
-                     var defaultLayout: Layout = KuratorDefaultLayout) {
+                     var defaultLayout: Layout<TemplateContext> = KuratorDefaultLayout) {
 
     private var collectionsBuilder = CollectionsBuilder()
 
@@ -37,10 +37,10 @@ ConfigurationBuilder(var title: String = "Title",
             url = url,
             sourceDir = sourceDir,
             destinationDir = destinationDir,
-            assetsDir = sourceDir + File.separator + assetsDir,
-            collectionsDir = sourceDir + File.separator + collectionsDir,
-            layoutsDir = sourceDir + File.separator + layoutsDir,
-            dataDir = sourceDir + File.separator + dataDir,
+            assetsDir = buildResourceDir(sourceDir, assetsDir),
+            collectionsDir = buildResourceDir(sourceDir, collectionsDir),
+            layoutsDir = buildResourceDir(sourceDir, layoutsDir),
+            dataDir = buildResourceDir(sourceDir, dataDir),
             debug = debug,
             markdownExtensions = markdownExtensions,
             host = host,
@@ -48,5 +48,10 @@ ConfigurationBuilder(var title: String = "Title",
             baseurl = baseurl,
             collectionsConfig = collectionsBuilder.build(),
             defaultLayout = defaultLayout)
+
+    private fun buildResourceDir(vararg pathElements: String): String {
+        // we can't use File.separator because Reflections doesn't support windows-style separators...
+        return pathElements.filter { it.isNotBlank() }.joinToString("/")
+    }
 
 }

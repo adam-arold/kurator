@@ -8,6 +8,7 @@ import org.reflections.Reflections
 import java.io.File
 
 
+@Suppress("UNCHECKED_CAST")
 class SiteGenerator(private val documentLoader: DocumentLoader) {
 
     fun generate(config: Configuration) {
@@ -35,16 +36,16 @@ class SiteGenerator(private val documentLoader: DocumentLoader) {
                 configuration = config)
     }
 
-    private fun loadLayouts(config: Configuration): Map<String, Layout> {
+    private fun loadLayouts(config: Configuration): Map<String, Layout<out Any>> {
         val reflections = Reflections(config.layoutsDir)
         return reflections.getSubTypesOf(Layout::class.java).map { klass ->
             val instances = klass.declaredFields.filter { it.name == OBJECT_INSTANCE_NAME }
             require(instances.size == 1) {
                 "A layout must be declared as an `object`."
             }
-            val layout = instances.first().get(null) as? Layout
+            val layout = instances.first().get(null) as? Layout<out Any>
                     ?: throw IllegalArgumentException("A Layout must extend `Layout`.")
-            layout.name() to layout
+            layout::class.simpleName!! to layout
         }.toMap()
     }
 
@@ -52,10 +53,10 @@ class SiteGenerator(private val documentLoader: DocumentLoader) {
         collections.forEach { coll ->
             File(config.destinationDir + File.separator + coll.config.name).mkdirs()
             coll.pages.forEach { page ->
-                val contentBuilder = coll.layout().contentBuilder
+                val contentBuilder = coll.layout().templateBuilder
                 val sb = StringBuilder()
                 val tagConsumer = sb.appendHTML()
-                contentBuilder.invoke(tagConsumer, TemplateContext(
+                contentBuilder.build(tagConsumer, TemplateContext(
                         page = page,
                         site = siteData))
 

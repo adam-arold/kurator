@@ -31,15 +31,11 @@ buildscript {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.8'
-    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
-}
-
 ext {
     kurator_projects = [
-            core   : ":kurator.core",
-            example: ":kurator.example"
+            core     : ":kurator.core",
+            templates: ":kurator.templates",
+            example  : ":kurator.example"
     ]
     libraries = [
             kotlin_stdlib             : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
@@ -67,6 +63,7 @@ ext {
 subprojects {
 
     apply plugin: 'kotlin'
+    apply plugin: 'org.junit.platform.gradle.plugin'
 
     compileKotlin {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -83,6 +80,14 @@ subprojects {
 
         kotlinOptions {
             jvmTarget = "1.8"
+        }
+    }
+
+    junitPlatform {
+        filters {
+            engines {
+                include 'junit-jupiter'
+            }
         }
     }
 

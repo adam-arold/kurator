@@ -1,6 +1,7 @@
 package org.codetome.kurator.data.user.builder
 
 import org.codetome.kurator.data.domain.CollectionConfig
+import org.codetome.kurator.data.domain.TemplateContext
 import org.codetome.kurator.defaults.KuratorDefaultLayout
 import org.codetome.kurator.template.Layout
 
@@ -9,7 +10,7 @@ import org.codetome.kurator.template.Layout
  */
 data class CollectionConfigBuilder(var name: String = "",
                                    var permalink: String = "",
-                                   var layout: Layout = KuratorDefaultLayout,
+                                   var layout: Layout<TemplateContext> = KuratorDefaultLayout,
                                    var defaultValues: Any = "") {
 
     fun build() = CollectionConfig(

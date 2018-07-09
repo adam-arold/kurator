@@ -1,5 +1,1 @@
 archivesBaseName = "kurator.core"
-
-dependencies {
-    compile project(kurator_projects.templates)
-}

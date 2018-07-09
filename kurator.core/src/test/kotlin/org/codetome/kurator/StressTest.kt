@@ -3,10 +3,7 @@ package org.codetome.kurator
 import org.codetome.kurator.data.user.configure
 import org.codetome.kurator.service.DocumentLoader
 import org.codetome.kurator.service.SiteGenerator
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import java.io.File
 import java.util.*
 
@@ -32,6 +29,7 @@ class StressTest {
 
     @DisplayName("it should be able to generate 10.000 pages within the time limit")
     @Test
+    @Disabled
     fun testGenerationSpeed() {
         val template = File("src/test/resources/templates/test_template.md")
         (0 until fileCount).forEach {
@@ -42,8 +40,9 @@ class StressTest {
             sourceDir = this@StressTest.sourceDir.path
             destinationDir
             collections {
-                collection {
+                collection<Unit> {
                     name = "blog"
+                    defaultValues = Unit
                 }
             }
         })

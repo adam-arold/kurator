@@ -3,15 +3,15 @@ package layouts
 import includes.Head
 import kotlinx.html.*
 import org.codetome.kurator.data.domain.TemplateContext
-import org.codetome.kurator.extension.content
-import org.codetome.kurator.extension.include
+import org.codetome.kurator.extensions.content
+import org.codetome.kurator.extensions.include
 import org.codetome.kurator.template.Layout
-import org.codetome.kurator.template.buildTemplate
+import org.codetome.kurator.template.template
 
-object Default : Layout<TemplateContext>(buildTemplate { ctx ->
+object Default : Layout<TemplateContext<Unit>>(template { ctx ->
     val (page, site) = ctx
     html {
-        include(Head, ctx)
+        include(Head, ctx.site)
         body {
             nav {
                 ul {

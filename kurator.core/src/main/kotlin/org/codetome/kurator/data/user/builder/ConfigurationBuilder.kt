@@ -21,7 +21,7 @@ ConfigurationBuilder(var title: String = "Title",
                      var host: String = "127.0.0.1",
                      var port: Int = 4000,
                      var baseurl: String = "",
-                     var defaultLayout: Layout<TemplateContext> = KuratorDefaultLayout) {
+                     var defaultLayout: Layout<TemplateContext<Unit>> = KuratorDefaultLayout) {
 
     private var collectionsBuilder = CollectionsBuilder()
 
@@ -37,7 +37,7 @@ ConfigurationBuilder(var title: String = "Title",
             url = url,
             sourceDir = sourceDir,
             destinationDir = destinationDir,
-            assetsDir = buildResourceDir(sourceDir, assetsDir),
+            assetsDir = assetsDir,
             collectionsDir = buildResourceDir(sourceDir, collectionsDir),
             layoutsDir = buildResourceDir(sourceDir, layoutsDir),
             dataDir = buildResourceDir(sourceDir, dataDir),

@@ -3,7 +3,9 @@ package org.codetome.kurator.service
 import kotlinx.html.stream.appendHTML
 import org.codetome.kurator.data.domain.*
 import org.codetome.kurator.data.domain.Collection
+import org.codetome.kurator.extensions.exists
 import org.codetome.kurator.template.Layout
+import org.codetome.kurator.template.TemplateBuilder
 import org.reflections.Reflections
 import java.io.File
 
@@ -28,7 +30,7 @@ class SiteGenerator(private val documentLoader: DocumentLoader) {
         copyAssets(config)
     }
 
-    private fun loadSiteData(config: Configuration, collections: List<Collection>): Site {
+    private fun loadSiteData(config: Configuration, collections: List<Collection<out Any>>): Site {
         return Site(
                 title = config.title,
                 collections = collections,
@@ -49,16 +51,21 @@ class SiteGenerator(private val documentLoader: DocumentLoader) {
         }.toMap()
     }
 
-    private fun generateCollections(collections: List<Collection>, config: Configuration, siteData: Site, destinationDir: File) {
-        collections.forEach { coll ->
+    private fun generateCollections(collections: List<Collection<out Any>>,
+                                    config: Configuration,
+                                    siteData: Site,
+                                    destinationDir: File) {
+        collections.forEach { coll: Collection<out Any> ->
             File(config.destinationDir + File.separator + coll.config.name).mkdirs()
+            val collConfig: CollectionConfig<out Any> = config.fetchCollectionConfigFor(coll)
             coll.pages.forEach { page ->
-                val contentBuilder = coll.layout().templateBuilder
+                val contentBuilder: TemplateBuilder<Any> = coll.layout().templateBuilder as TemplateBuilder<Any>
                 val sb = StringBuilder()
                 val tagConsumer = sb.appendHTML()
                 contentBuilder.build(tagConsumer, TemplateContext(
                         page = page,
-                        site = siteData))
+                        site = siteData,
+                        pageData = collConfig.defaultValues))
 
                 val documentFile = File(destinationDir.absolutePath + File.separator +
                         coll.config.name + File.separator +
@@ -70,33 +77,34 @@ class SiteGenerator(private val documentLoader: DocumentLoader) {
 
     private fun prepareDestinationDir(config: Configuration): File {
         val destinationDir = File(config.destinationDir)
-        destinationDir.listFiles().forEach {
-            it.deleteRecursively()
+        destinationDir.exists {
+            it.listFiles().forEach {
+                it.deleteRecursively()
+            }
         }
         destinationDir.mkdirs()
         return destinationDir
     }
 
     private fun copyAssets(config: Configuration) {
-        val assetsDir = File(config.assetsDir)
+        val assetsDir = File(config.sourceDir + File.separator + config.assetsDir)
         assetsDir.copyRecursively(File(config.destinationDir + File.separator + config.assetsDir))
     }
 
-    private fun loadCollections(config: Configuration): List<Collection> {
+    private fun loadCollections(config: Configuration): List<Collection<out Any>> {
         val collectionsConfig = config.collectionsConfig.map { it.name to it }.toMap()
         val collectionsDir = File(config.collectionsDir)
         return collectionsDir.listFiles { it ->
             it.isDirectory
-        }.filter {
-            collectionsConfig.containsKey(it.name)
         }.map { collectionDir ->
             val collName = collectionDir.name
+            val collConfig: CollectionConfig<out Any> = collectionsConfig[collName]
+                    ?: throw NoSuchElementException("No config found for collection: '$collName'.")
             Collection(
-                    config = collectionsConfig[collName]
-                            ?: throw NoSuchElementException("No config found for collection: '$collName'."),
+                    config = collConfig as CollectionConfig<Any>,
                     pages = collectionDir.listFiles()
                             .filter { it.isFile }
-                            .map { documentLoader.load(it, config) })
+                            .map { documentLoader.load(it, config, collConfig) })
         }
     }
 

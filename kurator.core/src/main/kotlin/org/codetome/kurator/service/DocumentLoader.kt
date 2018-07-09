@@ -12,6 +12,7 @@ import com.vladsch.flexmark.html.HtmlRenderer
 import com.vladsch.flexmark.parser.Parser
 import com.vladsch.flexmark.parser.ParserEmulationProfile
 import com.vladsch.flexmark.util.options.MutableDataSet
+import org.codetome.kurator.data.domain.CollectionConfig
 import org.codetome.kurator.data.domain.Configuration
 import org.codetome.kurator.data.user.UserDocumentData
 import org.yaml.snakeyaml.Yaml
@@ -23,14 +24,15 @@ import java.util.*
 
 class DocumentLoader {
 
-    fun load(path: String, config: Configuration) = load(File(path), config)
+    fun <T> load(path: String, config: Configuration, collectionConfig: CollectionConfig<T>) = load(File(path), config, collectionConfig)
 
-    fun load(file: File, config: Configuration): org.codetome.kurator.data.domain.Document {
+    fun <T> load(file: File, config: Configuration, collectionConfig: CollectionConfig<T>): org.codetome.kurator.data.domain.Document {
         val fileContent = file.readText()
         val parser = Parser.builder(options).build()
         val (document, frontMatterStr) = fetchDocumentAndFrontMatter(parser, fileContent)
         val content = HtmlRenderer.builder(options).build().render(document)
         val userDocumentData: UserDocumentData = loadUserPageData(frontMatterStr)
+        val customDocumentData: Any = collectionConfig.layout
         val id = file.nameWithoutExtension // TODO: fix this
 
         return org.codetome.kurator.data.domain.Document(

@@ -22,7 +22,7 @@ object SiteConfig : Config(configure {
     baseurl = ""
     defaultLayout = Default
     collections {
-        collection {
+        collection<BlogData> {
             name = "blog"
             permalink = "blog"
             layout = Blog
@@ -30,10 +30,11 @@ object SiteConfig : Config(configure {
                     author = "Batman",
                     featured = false)
         }
-        collection {
+        collection<Unit> {
             name = "news"
             permalink = "news"
             layout = Default
+            defaultValues = Unit
         }
     }
 })

@@ -6,10 +6,9 @@ import kotlinx.html.html
 import kotlinx.html.p
 import org.codetome.kurator.data.domain.TemplateContext
 import org.codetome.kurator.template.Layout
-import org.codetome.kurator.template.buildTemplate
+import org.codetome.kurator.template.template
 
-object KuratorDefaultLayout : Layout<TemplateContext>(buildTemplate { ctx ->
-    val (page, site) = ctx
+object KuratorDefaultLayout : Layout<TemplateContext<Unit>>(template {
     html {
         body {
             h1 { text("Welcome to Kurator!") }

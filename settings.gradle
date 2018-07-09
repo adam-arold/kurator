@@ -1,5 +1,4 @@
 rootProject.name = 'kurator'
 
-include ":kurator.templates"
 include ":kurator.core"
 include ":kurator.example"

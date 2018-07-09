@@ -4,13 +4,13 @@ import kotlinx.html.head
 import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.title
-import org.codetome.kurator.data.domain.TemplateContext
+import org.codetome.kurator.data.domain.Site
 import org.codetome.kurator.template.Template
-import org.codetome.kurator.template.buildTemplate
+import org.codetome.kurator.template.template
 
-object Head : Template<TemplateContext>(buildTemplate { ctx ->
+object Head : Template<Site>(template { site ->
     head {
-        title(ctx.site.title)
+        title(site.title)
         link {
             href = "https://fonts.googleapis.com/css?family=Source+Code+Pro"
             rel = "stylesheet"
